@@ -186,4 +186,5 @@ fi
 ###-tns-completion-end-###
 
 # to manage dotfiles
+# https://developer.atlassian.com/blog/2016/02/best-way-to-store-dotfiles-git-bare-repo/
 alias config='/usr/bin/git --git-dir=$HOME/.myconf/ --work-tree=$HOME'
