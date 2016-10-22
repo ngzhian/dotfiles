@@ -1,0 +1,13 @@
+#!/bin/bash
+vagrant ssh
+if [ $? -eq 0 ]
+then
+       echo "User account found!"
+else
+    echo "vagrant not up"
+    vagrant up
+    if [ $? -eq 0 ]
+    then
+        vagrant ssh
+    fi
+fi

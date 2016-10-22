@@ -1,0 +1,11 @@
+SESSION=$USER
+
+# create a new session name $SESSION, and detach from it
+tmux new-session -d -s $SESSION -c /home/ZhiAn/kemcho
+
+tmux rename-window -t $SESSION:1 serv
+tmux split-window -t $SESSION:1 -v
+tmux new-window -t $SESSION:2 -n git
+tmux new-window -t $SESSION:3 -n vim
+
+tmux attach -t $SESSION
