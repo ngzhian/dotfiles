@@ -21,6 +21,7 @@ Plugin 'tpope/vim-surround'
 Plugin 'Raimondi/delimitMate'
 Plugin 'majutsushi/tagbar'
 Plugin 'tpope/vim-fugitive'
+Plugin 'Valloric/YouCompleteMe'
 
 " tmux
 Plugin 'benmills/vimux'
@@ -127,10 +128,13 @@ set hidden
 "     stty -ixon
 " nnoremap <C-S> :<C-u>update<CR>
 " inoremap <c-s> <c-o>:update<CR>
+nnoremap <leader>a :update<CR>
+inoremap jf <Esc>
 
 " NERDTree config
 let NERDTreeChDirMode=2
-let NERDTreeIgnore=['\.vim$', '\~$', '\.pyc$', '\.swp$', '__pycache__$']
+" maybe set NERDTreeRespectWildIgnore to 1, then can reuse wildignore
+let NERDTreeIgnore=['\.cmi', '\.cmo', '\.vim$', '\~$', '\.pyc$', '\.swp$', '__pycache__$']
 let NERDTreeSortOrder=['^__\.py$', '\/$', '*', '\.swp$',  '\~$']
 let NERDTreeShowBookmarks=1
 map <F3> :NERDTreeToggle<CR>
@@ -160,7 +164,7 @@ let g:gitgutter_realtime = 0
 
 " Syntastic file checkers config
 let g:syntastic_python_checkers = ['python', 'pyflakes', 'pep8']
-let g:syntastic_javascript_checkers = ['jshint', 'gjslint', 'eslint']
+let g:syntastic_javascript_checkers = ['eslint', 'jshint', 'gjslint']
 let g:syntastic_ocaml_checkers = ['merlin']
 
 " Vimux
@@ -174,6 +178,7 @@ nmap <F8> :TagbarToggle<CR>
 " Merlin
 let g:opamshare = substitute(system('opam config var share'),'\n$','','''')
 execute "set rtp+=" . g:opamshare . "/merlin/vim"
+nnoremap <leader>t :MerlinTypeOf<CR>
 
 " ocp-indent
 autocmd FileType ocaml source /Users/ngzhian/.opam/system/share/ocp-indent/vim/indent/ocaml.vim

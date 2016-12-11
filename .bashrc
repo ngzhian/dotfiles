@@ -48,6 +48,7 @@ esac
 force_color_prompt=yes
 
 source ~/.git-prompt.sh
+source ~/.git-completion.bash
 # from https://wiki.archlinux.org/index.php/Color_Bash_Prompt
 P_Black='\[\e[30m\]'
 P_Blue='\[\e[36m\]'
