@@ -134,11 +134,11 @@ inoremap jf <Esc>
 " NERDTree config
 let NERDTreeChDirMode=2
 " maybe set NERDTreeRespectWildIgnore to 1, then can reuse wildignore
-let NERDTreeIgnore=['\.cmi', '\.cmo', '\.vim$', '\~$', '\.pyc$', '\.swp$', '__pycache__$']
-let NERDTreeSortOrder=['^__\.py$', '\/$', '*', '\.swp$',  '\~$']
+let NERDTreeRespectWildIgnore=1
+" let NERDTreeSortOrder=['^__\.py$', '\/$', '*', '\.swp$',  '\~$']
 let NERDTreeShowBookmarks=1
-map <F3> :NERDTreeToggle<CR>
-map <F4> :NERDTreeFind<CR>
+nnoremap <leader>d :NERDTreeToggle<CR>
+nnoremap <leader>f :NERDTreeFind<CR>
 
 " vim-airline config
 let g:airline_theme='hybrid'
@@ -148,11 +148,12 @@ let g:airline_theme='hybrid'
 let g:UltiSnipsExpandTrigger="<c-j>"
 
 " YouCompleteMe
-nnoremap <leader>d :YcmCompleter GoToDeclaration<CR>
-nnoremap <leader>g :YcmCompleter GoToDefinition<CR>
+" nnoremap <leader>d :YcmCompleter GoToDeclaration<CR>
+" nnoremap <leader>g :YcmCompleter GoToDefinition<CR>
 
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip
 set wildignore+=*.pyc
+set wildignore+=*.cmi,*.cmo
 set wildignore+=*/node_modules/*
 
 " For ctrlp
