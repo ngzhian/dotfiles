@@ -10,3 +10,5 @@ if [ -f /Users/ngzhian/.tnsrc ]; then
     source /Users/ngzhian/.tnsrc 
 fi
 ###-tns-completion-end-###
+
+export LC_ALL="en_US.UTF-8"

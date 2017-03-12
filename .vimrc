@@ -155,6 +155,7 @@ set wildignore+=*/tmp/*,*.so,*.swp,*.zip
 set wildignore+=*.pyc
 set wildignore+=*.cmi,*.cmo
 set wildignore+=*/node_modules/*
+set wildignore+=*/build/*
 
 " For ctrlp
 let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn)$'
