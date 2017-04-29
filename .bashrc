@@ -128,6 +128,14 @@ if ! shopt -oq posix; then
   fi
 fi
 
+# if [ -f ~/bin/bash_completion_tmux.sh ]; then
+#     . ~/bin/bash_completion_tmux.sh
+# fi
+
+if [ -f ~/bin/tmux.completion.bash ]; then
+    . ~/bin/tmux.completion.bash
+fi
+
 export EDITOR=vim
 
 export GIT_PS1_SHOWSTASHSTATE=1
