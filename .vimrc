@@ -2,6 +2,9 @@ set enc=utf-8
 set nocompatible
 filetype off
 
+" temp map to test my colorscheme
+:nmap <Leader>c :colorscheme my<cr>
+
 " set the runtime path to include Vundle and initialize
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
@@ -22,6 +25,8 @@ Plugin 'Raimondi/delimitMate'
 Plugin 'majutsushi/tagbar'
 Plugin 'tpope/vim-fugitive'
 Plugin 'Valloric/YouCompleteMe'
+Plugin 'tpope/vim-unimpaired'
+Plugin 'godlygeek/tabular'
 
 " tmux
 Plugin 'benmills/vimux'
@@ -31,41 +36,44 @@ Plugin 'christoomey/vim-tmux-navigator'
 Plugin 'pangloss/vim-javascript'
 
 " python related
-Plugin 'fisadev/vim-isort'
-Plugin 'jmcantrell/vim-virtualenv'
+" Plugin 'fisadev/vim-isort'
+" Plugin 'jmcantrell/vim-virtualenv'
 " Plugin 'klen/python-mode' " runs slow on my com, disable it
 
 " less related
-Plugin 'groenewege/vim-less'
+" Plugin 'groenewege/vim-less'
 
 " ultisnips snippets
 Plugin 'honza/vim-snippets'
 
 " scala
-Plugin 'derekwyatt/vim-scala'
+" Plugin 'derekwyatt/vim-scala'
 
-" colors
-Plugin 'altercation/vim-colors-solarized'
+" haskell
+Plugin 'DanielG/ghc-mod'
+
+" ocaml
+Plugin 'rgrinberg/vim-ocaml'
+
 call vundle#end()
 filetype plugin indent on " enable fietype-specific indenting and pugins
 
 syntax on   " enable syntax highlighting
 
 let mapleader = ","
+let maplocalleader = "\\"
 
 " source $MYVIMRC reloads the saved $MYVIMRC
 :nmap <Leader>s :source $MYVIMRC<cr>
 " opens $MYVIMRC for editing, or use :tabedit $MYVIMRC
-:nmap <Leader>v :tabedit $MYVIMRC<cr>
+:nmap <Leader>vim :tabedit $MYVIMRC<cr>
 
 :nmap <Leader>n :lnext<cr>
 :nmap <Leader>p :lprev<cr>
 
 " let base16colorspace=256 " Access colors present in 256 colorspace
-set background=light " Setting dark mode
+set background=light " Setting light mode
 " colorscheme base16-atelierforest
-" let g:solarized_termcolors=256
-" colorscheme solarized
 
 set smartindent
 set tabstop=4
@@ -80,6 +88,9 @@ augroup myfiletypes
     autocmd FileType htmldjango setlocal sw=2
     autocmd FileType ocaml setlocal sw=2
     autocmd FileType ocaml setlocal commentstring=(*%s*)
+    au BufRead,BufNewFile *.ml,*.mli compiler ocaml
+    autocmd FileType markdown setlocal spell
+    autocmd FileType markdown setlocal commentstring=<!--%s-->
 augroup END
 
 set backspace=indent,eol,start "backspace over these
@@ -98,7 +109,7 @@ set incsearch " searches as you type
 
 set list listchars=tab:↣↣,trail:∙,extends:>,precedes:<
 
-" Turns off highlight using this key map    
+" Turns off highlight using this key map
 map <C-c> :noh<cr>
 
 " Window switching
@@ -156,6 +167,7 @@ set wildignore+=*.pyc
 set wildignore+=*.cmi,*.cmo
 set wildignore+=*/node_modules/*
 set wildignore+=*/build/*
+set wildignore+=*/_build/*
 
 " For ctrlp
 let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn)$'
@@ -170,18 +182,57 @@ let g:syntastic_javascript_checkers = ['eslint', 'jshint', 'gjslint']
 let g:syntastic_ocaml_checkers = ['merlin']
 
 " Vimux
-nnoremap <leader>r :VimuxRunLastCommand<CR>
+nnoremap <leader>vl :VimuxRunLastCommand<CR>
+nnoremap <leader>vp :VimuxPromptCommand<CR>
+nnoremap <leader>vq :VimuxCloseRunner<CR>
 
 " Tagbar
 nmap <F8> :TagbarToggle<CR>
 
 " Ocaml
+" nnoremap <leader>ot :MerlinTypeOf<CR>
+" nnoremap <leader>od :MerlinDestruct<CR>
+" nnoremap <leader>od :MerlinShrinkEnclosing<CR>
+" nnoremap <leader>od :MerlinGrowEnclosing<CR>
+nnoremap <localleader>md :MerlinDestruct<CR>
+" similar to how unimpaired binds keys
+nnoremap [m :MerlinShrinkEnclosing<CR>
+nnoremap ]m :MerlinGrowEnclosing<CR>
 
-" Merlin
-let g:opamshare = substitute(system('opam config var share'),'\n$','','''')
-execute "set rtp+=" . g:opamshare . "/merlin/vim"
-nnoremap <leader>t :MerlinTypeOf<CR>
+" ## added by OPAM user-setup for vim / base ## 93ee63e278bdfc07d1139a748ed3fff2 ## you can edit, but keep this line
+let s:opam_share_dir = system("opam config var share")
+let s:opam_share_dir = substitute(s:opam_share_dir, '[\r\n]*$', '', '')
 
-" ocp-indent
-autocmd FileType ocaml source /Users/ngzhian/.opam/system/share/ocp-indent/vim/indent/ocaml.vim
-set rtp^="/Users/ngzhian/.opam/system/share/ocp-indent/vim"
+let s:opam_configuration = {}
+
+function! OpamConfOcpIndent()
+  execute "set rtp^=" . s:opam_share_dir . "/ocp-indent/vim"
+endfunction
+let s:opam_configuration['ocp-indent'] = function('OpamConfOcpIndent')
+
+function! OpamConfOcpIndex()
+  execute "set rtp+=" . s:opam_share_dir . "/ocp-index/vim"
+endfunction
+let s:opam_configuration['ocp-index'] = function('OpamConfOcpIndex')
+
+function! OpamConfMerlin()
+  let l:dir = s:opam_share_dir . "/merlin/vim"
+  execute "set rtp+=" . l:dir
+endfunction
+let s:opam_configuration['merlin'] = function('OpamConfMerlin')
+
+let s:opam_packages = ["ocp-indent", "ocp-index", "merlin"]
+let s:opam_check_cmdline = ["opam list --installed --short --safe --color=never"] + s:opam_packages
+let s:opam_available_tools = split(system(join(s:opam_check_cmdline)))
+for tool in s:opam_packages
+  " Respect package order (merlin should be after ocp-index)
+  if count(s:opam_available_tools, tool) > 0
+    call s:opam_configuration[tool]()
+  endif
+endfor
+" ## end of OPAM user-setup addition for vim / base ## keep this line
+" ## added by OPAM user-setup for vim / ocp-indent ## 0613ec865dd5ccfcd98e342c1d20be42 ## you can edit, but keep this line
+if count(s:opam_available_tools,"ocp-indent") == 0
+  source "/Users/ngzhian/.opam/4.02.3+buckle-master/share/vim/syntax/ocp-indent.vim"
+endif
+" ## end of OPAM user-setup addition for vim / ocp-indent ## keep this line
