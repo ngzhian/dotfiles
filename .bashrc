@@ -47,8 +47,8 @@ esac
 # should be on the output of commands, not on the prompt
 force_color_prompt=yes
 
-source ~/.git-prompt.sh
-source ~/.git-completion.bash
+[[ -f ~/bin/git-prompt.sh ]] && source ~/bin/git-prompt.sh
+[[ -f ~/bin/git-completion.sh ]] && source ~/bin/git-completion.sh
 # from https://wiki.archlinux.org/index.php/Color_Bash_Prompt
 P_Black='\[\e[30m\]'
 P_Blue='\[\e[36m\]'

@@ -32,3 +32,6 @@
     fu = commit --fixup=HEAD
 [merge]
     tool = vimdiff
+[rebase]
+    autoSquash = true
+    autoStash = true
