@@ -11,8 +11,7 @@ call vundle#begin()
 
 Plugin 'VundleVim/Vundle.vim'
 Plugin 'SirVer/ultisnips'
-Plugin 'airblade/vim-gitgutter'
-Plugin 'bling/vim-airline'
+Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
 Plugin 'ctrlpvim/ctrlp.vim'
 Plugin 'rking/ag.vim'
@@ -55,6 +54,9 @@ Plugin 'DanielG/ghc-mod'
 " ocaml
 Plugin 'rgrinberg/vim-ocaml'
 
+" dart
+Plugin 'dart-lang/dart-vim-plugin'
+
 call vundle#end()
 filetype plugin indent on " enable fietype-specific indenting and pugins
 
@@ -73,7 +75,7 @@ let maplocalleader = "\\"
 
 " let base16colorspace=256 " Access colors present in 256 colorspace
 set background=light " Setting light mode
-" colorscheme base16-atelierforest
+colorscheme my " my custom colorscheme
 
 set smartindent
 set tabstop=4
@@ -152,7 +154,17 @@ nnoremap <leader>d :NERDTreeToggle<CR>
 nnoremap <leader>f :NERDTreeFind<CR>
 
 " vim-airline config
-let g:airline_theme='hybrid'
+let g:airline_theme='dark'
+let g:airline#extensions#tabline#enabled = 1
+" default value for b
+" let g:airline_section_b = '%{airline#util#wrap(airline#extensions#hunks#get_hunks(),0)}%{airline#util#wrap(airline#extensions#branch#get_head(),0)}}'
+" let g:airline_section_b = '%{airline#util#wrap(airline#extensions#hunks#get_hunks(),0)}'
+" default value for y
+" let g:airline_section_y = '%{airline#util#wrap(airline#parts#ffenc(),0)}'
+let g:airline_section_y = ''
+" default value for z
+" let g:airline_section_z = '%3p%% %#__accent_bold#%{g:airline_symbols.linenr}%4l%#__restore__#%#__accent_bold#/%L%{g:airline_symbols.maxlinenr}%#__restore__# :%3v'
+let g:airline_section_z = '%4l/%L %3v'
 
 " Trigger configuration. Do not use <tab> if you use
 " https://github.com/Valloric/YouCompleteMe.
@@ -231,8 +243,8 @@ for tool in s:opam_packages
   endif
 endfor
 " ## end of OPAM user-setup addition for vim / base ## keep this line
-" ## added by OPAM user-setup for vim / ocp-indent ## 0613ec865dd5ccfcd98e342c1d20be42 ## you can edit, but keep this line
+" ## added by OPAM user-setup for vim / ocp-indent ## 9cf34f5f05690737369f61917052783c ## you can edit, but keep this line
 if count(s:opam_available_tools,"ocp-indent") == 0
-  source "/Users/ngzhian/.opam/4.02.3+buckle-master/share/vim/syntax/ocp-indent.vim"
+  source "/Users/ngzhian/.opam/system/share/vim/syntax/ocp-indent.vim"
 endif
 " ## end of OPAM user-setup addition for vim / ocp-indent ## keep this line

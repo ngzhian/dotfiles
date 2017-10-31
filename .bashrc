@@ -8,7 +8,7 @@ case $- in
       *) return;;
 esac
 
-export PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
+export PATH=$PATH:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
 
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
@@ -27,7 +27,7 @@ shopt -s checkwinsize
 
 # If set, the pattern "**" used in a pathname expansion context will
 # match all files and zero or more directories and subdirectories.
-#shopt -s globstar
+# shopt -s globstar
 
 # make less more friendly for non-text input files, see lesspipe(1)
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
@@ -128,10 +128,6 @@ if ! shopt -oq posix; then
   fi
 fi
 
-# if [ -f ~/bin/bash_completion_tmux.sh ]; then
-#     . ~/bin/bash_completion_tmux.sh
-# fi
-
 if [ -f ~/bin/tmux.completion.bash ]; then
     . ~/bin/tmux.completion.bash
 fi
@@ -196,4 +192,8 @@ fi
 
 # to manage dotfiles
 # https://developer.atlassian.com/blog/2016/02/best-way-to-store-dotfiles-git-bare-repo/
-alias config='/usr/bin/git --git-dir=$HOME/.myconf/ --work-tree=$HOME'
+# prerequisite:
+# git init --bare $HOME/.dotfiles
+alias config='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
+# and optionally:
+# config config --local status.showUntrackedFiles no
