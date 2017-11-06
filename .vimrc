@@ -57,6 +57,9 @@ Plugin 'rgrinberg/vim-ocaml'
 " dart
 Plugin 'dart-lang/dart-vim-plugin'
 
+Plugin 'junegunn/fzf'
+Plugin 'junegunn/fzf.vim'
+
 call vundle#end()
 filetype plugin indent on " enable fietype-specific indenting and pugins
 

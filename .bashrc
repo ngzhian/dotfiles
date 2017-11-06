@@ -197,3 +197,5 @@ fi
 alias config='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 # and optionally:
 # config config --local status.showUntrackedFiles no
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
