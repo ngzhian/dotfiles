@@ -16,7 +16,7 @@ Plugin 'vim-airline/vim-airline-themes'
 Plugin 'ctrlpvim/ctrlp.vim'
 Plugin 'mileszs/ack.vim'
 Plugin 'scrooloose/nerdtree'
-Plugin 'scrooloose/syntastic'
+" Plugin 'scrooloose/syntastic'
 Plugin 'w0rp/ale'
 Plugin 'tpope/vim-commentary'
 Plugin 'tpope/vim-sensible'
@@ -135,7 +135,7 @@ nnoremap <silent> [b :bprevious<CR>
 nnoremap <silent> ]b :bnext<CR>
 nnoremap <silent> ]B :bfirst<CR>
 nnoremap <silent> ]B :blast<CR>
-nnoremap <leader>q :bufdo bd<CR>
+nnoremap <leader>q :bd<CR>
 
 set hidden
 
