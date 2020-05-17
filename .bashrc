@@ -1,121 +1,24 @@
-# ~/.bashrc: executed by bash(1) for non-login shells.
-# see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
-# for examples
-
+# vim: filetype=sh
 # If not running interactively, don't do anything
 case $- in
     *i*) ;;
       *) return;;
 esac
 
-export PATH=$PATH:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
-
-# don't put duplicate lines or lines starting with space in the history.
-# See bash(1) for more options
-HISTCONTROL=ignoreboth
-
-# append to the history file, don't overwrite it
-shopt -s histappend
-
-# for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
-HISTSIZE=10000
-HISTFILESIZE=20000
+# shell options {{{
+# If set, the pattern "**" used in a pathname expansion context will
+# match all files and zero or more directories and subdirectories.
+shopt -s globstar
 
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
 shopt -s checkwinsize
-
-# If set, the pattern "**" used in a pathname expansion context will
-# match all files and zero or more directories and subdirectories.
-# shopt -s globstar
-
-# make less more friendly for non-text input files, see lesspipe(1)
-[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
-
-# set variable identifying the chroot you work in (used in the prompt below)
-if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
-    debian_chroot=$(cat /etc/debian_chroot)
-fi
-
-# set a fancy prompt (non-color, unless we know we "want" color)
-case "$TERM" in
-    xterm-color|*-256color) color_prompt=yes;;
-esac
-
-# uncomment for a colored prompt, if the terminal has the capability; turned
-# off by default to not distract the user: the focus in a terminal window
-# should be on the output of commands, not on the prompt
-force_color_prompt=yes
-
-[[ -f ~/bin/git-prompt.sh ]] && source ~/bin/git-prompt.sh
-[[ -f ~/bin/git-completion.sh ]] && source ~/bin/git-completion.sh
-# from https://wiki.archlinux.org/index.php/Color_Bash_Prompt
-P_Black='\[\e[30m\]'
-P_Blue='\[\e[36m\]'
-P_Red='\[\e[31m\]'
-P_Green='\[\e[32m\]'
-P_Reset='\[\e[00m\]'
-TOP="${P_Black}┌$P_Reset"
-BOTTOM="${P_Black}└$P_Reset "
-set_prompt () {
-  Last_Command=$? # Must come first!
-  PS1=
-  PS1+="$TOP"
-  # If it was successful, print a green check mark. Otherwise, print
-  # a red X.
-  if [[ $Last_Command == 0 ]]; then
-    PS1+="──$P_Green "
-  else
-    PS1+=" $P_Red\$? "
-  fi
-  # If root, just print the host in red. Otherwise, print the current user
-  # and host in green.
-  if [[ $EUID == 0 ]]; then
-    PS1+="$P_Red\\h "
-  else
-    PS1+="$P_Green\\u "
-  fi
-  # Print the working directory and prompt marker in blue, and reset
-  # the text color to the default.
-  PS1+="$P_Blue\\W$P_Reset\$(__git_ps1 \" (%s)\") $P_Blue\n$BOTTOM\\\$$P_Reset "
-}
-
-PROMPT_COMMAND='set_prompt'
-unset color_prompt force_color_prompt
-
-# enable color support of ls and also add handy aliases
-if [ -x /usr/bin/dircolors ]; then
-    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-    alias ls='ls --color=auto'
-    #alias dir='dir --color=auto'
-    #alias vdir='vdir --color=auto'
-
-    alias grep='grep --color=auto'
-    alias fgrep='fgrep --color=auto'
-    alias egrep='egrep --color=auto'
-fi
-
-# colored GCC warnings and errors
-#export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
-
-# some more ls aliases
-alias ls='ls -G'
-alias ll='ls -alF'
-alias la='ls -A'
-alias l='ls -CF'
-
-# Add an "alert" alias for long running commands.  Use like so:
-#   sleep 10; alert
-alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
-
-# Alias definitions.
-# You may want to put all your additions into a separate file like
-# ~/.bash_aliases, instead of adding them here directly.
-# See /usr/share/doc/bash-doc/examples in the bash-doc package.
-
-if [ -f ~/.bash_aliases ]; then
-    . ~/.bash_aliases
-fi
+# add to history
+shopt -s histappend
+# lines beginning with space are not saved
+# lines matching previous history are not saved
+# previous lines matching current line are removed
+export HISTCONTROL=ignorespace:ignoredups:erasedups
 
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
@@ -127,75 +30,162 @@ if ! shopt -oq posix; then
     . /etc/bash_completion
   fi
 fi
+# }}}
 
-if [ -f ~/bin/tmux.completion.bash ]; then
-    . ~/bin/tmux.completion.bash
+# make less more friendly for non-text input files, see lesspipe(1)
+[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
+
+[ -f ~/bin/git-prompt.sh ] && source ~/bin/git-prompt.sh
+GIT_PS1_SHOWDIRTYSTATE=1 # show unstaged (*) and staged changes (+)
+GIT_PS1_SHOWSTASHSTATE=1 # show stash status ($)
+GIT_PS1_SHOWUNTRACKEDFILES=1 # show untracked files (%)
+
+# from https://wiki.archlinux.org/index.php/Color_Bash_Prompt
+P_RESET='\[\e[00m\]'
+P_BLACK='\[\e[30m\]'
+P_RED='\[\e[31m\]'
+P_GREEN='\[\e[32m\]'
+P_BLUE='\[\e[36m\]'
+P_WHITE='\[\e[37m\]'
+P_DIM='\[\e[3m\]'
+TOP="${P_BLACK}┌$P_RESET"
+BOTTOM="${P_BLACK}└$P_RESET "
+set_prompt () {
+  last_exit=$? # Must come first!
+  PS1="$TOP"
+  # If it was successful, print a green check mark. Otherwise, print
+  # a red X.
+  if [[ $last_exit == 0 ]]; then
+    PS1+="──$P_GREEN$P_RESET "
+  else
+    PS1+=" $P_RED$last_exit$P_RESET "
+  fi
+  DATE=$(date +%H:%M)
+  PS1+="$DATE "
+  # If root, just print the host in red. Otherwise, print the current user
+  # and host in green.
+  if [[ $EUID == 0 ]]; then
+    PS1+="$P_RED\\h "
+  else
+    PS1+="$P_GREEN" # experiment to not show username, i know who i am, root is diff bashrc
+  fi
+  # Print the working directory and prompt marker in blue, and reset
+  # the text color to the default.
+  # chromium is too large, slows down the prompt
+  if [[ $(pwd) =~ chromium ]]; then
+      PS1+="$P_BLUE\\w$P_RESET $P_BLUE$P_WHITE\n"
+  else
+      PS1+="$P_BLUE\\w$P_RESET $P_BLUE$P_WHITE$(__git_ps1 "(%s)")\n"
+  fi
+  PS1+="$BOTTOM\\\$$P_RESET "
+}
+
+PROMPT_COMMAND='set_prompt'
+# }}}
+
+# fzf {{{
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+# use ag for fzf's default command so that .gitignore is respected
+export FZF_DEFAULT_COMMAND='ag -l'
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+# }}}
+
+# aliases {{{
+if [ -f ~/.bash_aliases ]; then
+    . ~/.bash_aliases
 fi
+# }}}
 
-export EDITOR=vim
-
-export GIT_PS1_SHOWSTASHSTATE=1
-export GIT_PS1_SHOWDIRTYSTATE=1
-export GIT_PS1_SHOWUPSTREAM=1
-
-up () {
+# utility functions {{{
+function up () {
+  path=$(pwd)
   if [ "$#" -eq 0 ]; then
-    cd ..
+    cd "$path/.."
   else
     TIMES=$1
-    while [ $TIMES -gt 0 ]; do
-      cd ..
+    path+="/"
+    while [ "$TIMES" -gt 0 ]; do
+      path+="../"
       let TIMES=TIMES-1
     done
+    cd "$path"
   fi
 }
 
-# ssh
-SSH_ENV=$HOME/.ssh/environment
+# dev {{{
+source $HOME/bin/dev.sh
+# }}}
 
-# start the ssh-agent
-function start_agent {
-  echo "Initializing new SSH agent..."
-  # spawn ssh-agent
-  /usr/bin/ssh-agent | sed 's/^echo/#echo/' > "${SSH_ENV}"
-  echo succeeded
-  chmod 600 "${SSH_ENV}"
-  . "${SSH_ENV}" > /dev/null
-  /usr/bin/ssh-add
+# watch a directory recursively for changes then run a command
+function watchandbuild() {
+  dir=$1
+  shift
+  while inotifywait -r "$dir" -e modify; do
+      $*
+    done;
 }
 
-if [ -f "${SSH_ENV}" ]; then
-  . "${SSH_ENV}" > /dev/null
-  ps -ef | grep ${SSH_AGENT_PID} | grep ssh-agent$ > /dev/null || {
-    start_agent;
-  }
-else
-  start_agent;
-fi
+# chrome/v8/d8/wasm {{{
+export PATH=$HOME/ssd2/wabt/bin:$HOME/ssd1/depot_tools:$HOME/ssd1/v8/v8/tools/dev:$PATH
 
-genctags() {
-    ctags --recurse --exclude=idl --exclude=migrations --exclude=*.json --exclude=*.js --exclude=*.css --exclude=*.scss --exclude=*.less --exclude=*.JSON
+function sync-chromium() {
+  set -x
+  if ! dev chromium; then
+    echo "Failed to cd"
+    set +x
+    return
+  fi
+
+  if ! git rebase-update; then
+    echo "Failed to rebase"
+    set +x
+    return
+  fi
+
+  gclient sync -D
+
+  if [[ ! -e out/ia32-liftoff-fuzz ]]; then
+    gn gen out/ia32-liftoff-fuzz
+    gn args out/ia32-liftoff-fuzz --args="use_goma=true enable_nacl=false blink_symbol_level=0 use_libfuzzer=true is_asan=true is_lsan=true"
+  fi
+  autoninja -C out/ia32-liftoff-fuzz v8_wasm_compile_fuzzer
+
+  if [[ ! -e out/Default ]]; then
+    gn gen out/Default
+    gn args out/Default --args="use_goma=true enable_nacl=false blink_symbol_level=0"
+  fi
+  autoninja -C out/Default/ chrome
+
+  if [[ -e out/x64-fuzz ]]; then
+    autoninja -C out/x64-fuzz v8_wasm_compile_fuzzer
+  fi
+
+  if [[ -e out/arm64-fuzz ]]; then
+    autoninja -C out/arm64-fuzz v8_wasm_compile_fuzzer
+  fi
+
+  set +x
 }
 
-export NVM_DIR="/Users/ngzhian/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
+# bash completion for d8
+[[ -e ~/v8 ]] && source ~/v8/tools/bash-completion.sh
+# bash completion for gclient and git cl
+source "$(type -P gclient_completion.sh)"
+source "$(type -P git_cl_completion.sh)"
 
-if [ -f .secrets ]; then
-  source .secrets
-fi
+# home-made completion for `gm`, works for already built targets, and test targets
+#  - cctest
+#  - mjsunit
+#  - inspector
+# with fzf support when trying to complete "**" (source after fzf)
+source "$(type -P gm_completion.sh)"
+# }}}
 
-###-tns-completion-start-###
-if [ -f /Users/ngzhian/.tnsrc ]; then
-    source /Users/ngzhian/.tnsrc
-fi
-###-tns-completion-end-###
-
-# to manage dotfiles
+# dotfiles management {{{
 # https://developer.atlassian.com/blog/2016/02/best-way-to-store-dotfiles-git-bare-repo/
 # prerequisite:
 # git init --bare $HOME/.dotfiles
 alias config='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 # and optionally:
 # config config --local status.showUntrackedFiles no
-
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+# }}}

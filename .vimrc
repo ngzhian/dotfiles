@@ -1,254 +1,253 @@
-set enc=utf-8
-set nocompatible
-filetype off
+" {{{ TOC
+" - Plugins installation
+" - General customizations
+" - Plugin customization
+" - Filetype/Language specific customizations
+" - LSP customizations
+" - Abbreviations
+" - Misc helpers
+" }}}
 
-" temp map to test my colorscheme
-:nmap <Leader>c :colorscheme my<cr>
+" Enable modern Vim features not compatible with Vi spec.
+set nocompatible
+
+" Needed for now by Vundle
+filetype off
 
 " set the runtime path to include Vundle and initialize
 set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
+if isdirectory(expand('$HOME/.vim/bundle/Vundle.vim'))
+  call vundle#begin()
 
-Plugin 'VundleVim/Vundle.vim'
-Plugin 'SirVer/ultisnips'
-Plugin 'vim-airline/vim-airline'
-Plugin 'vim-airline/vim-airline-themes'
-Plugin 'ctrlpvim/ctrlp.vim'
-Plugin 'mileszs/ack.vim'
-Plugin 'scrooloose/nerdtree'
-" Plugin 'scrooloose/syntastic'
-Plugin 'w0rp/ale'
-Plugin 'tpope/vim-commentary'
-Plugin 'tpope/vim-sensible'
-Plugin 'tpope/vim-surround'
-Plugin 'Raimondi/delimitMate'
-Plugin 'majutsushi/tagbar'
-Plugin 'tpope/vim-fugitive'
-Plugin 'Valloric/YouCompleteMe'
-Plugin 'tpope/vim-unimpaired'
-Plugin 'godlygeek/tabular'
+  " let Vundle manage Vundle, required
+  Plugin 'VundleVim/Vundle.vim'
 
-" tmux
-Plugin 'benmills/vimux'
-Plugin 'christoomey/vim-tmux-navigator'
+  " tmux
+  " Allows sending keys to another tmux pane from within vim
+  Plugin 'benmills/vimux'
+  " Allows using the same keys to navigate vim panes and tmux panes.
+  " This overwrites Ctrl-{h,j,k,l}, which usually behaves the same as
+  " non-Ctrl.
+  Plugin 'christoomey/vim-tmux-navigator'
 
-" javascript
-Plugin 'pangloss/vim-javascript'
+  " fuzzy find interface for files, buffers, history, etc.
+  Plugin 'junegunn/fzf.vim'
 
-" python related
-" Plugin 'fisadev/vim-isort'
-" Plugin 'jmcantrell/vim-virtualenv'
-" Plugin 'klen/python-mode' " runs slow on my com, disable it
+  " quickly jump to a specific letter visible on the screen
+  Plugin 'easymotion/vim-easymotion'
 
-" less related
-" Plugin 'groenewege/vim-less'
+  " LSP related functionality
+  " Needed for async commands to work right.
+  Plugin 'prabirshrestha/async.vim'
+  " LSP client
+  Plugin 'prabirshrestha/vim-lsp'
+  " Autocompletion
+  Plugin 'prabirshrestha/asyncomplete.vim'
+  " Use LSP as autocomplete source
+  Plugin 'prabirshrestha/asyncomplete-lsp.vim'
+  " Use buffer as autocomplete source
+  Plugin 'prabirshrestha/asyncomplete-buffer.vim'
+  " Use file names as autocomplete source
+  Plugin 'prabirshrestha/asyncomplete-file.vim'
+  
+  " Easily comment out lines/selection with gc
+  Plugin 'tpope/vim-commentary'
 
-" ultisnips snippets
-Plugin 'honza/vim-snippets'
+  call vundle#end()
+else
+  echomsg 'Vundle is not installed. You can install Vundle from'
+      \ 'https://github.com/VundleVim/Vundle.vim'
+endif
 
-" scala
-" Plugin 'derekwyatt/vim-scala'
+" Enable filetype detection and turn on plugin and indent files
+filetype plugin indent on
 
-" haskell
-Plugin 'DanielG/ghc-mod'
+" Enable syntax (lexcial) highlighting
+syntax on
 
-" ocaml
-Plugin 'rgrinberg/vim-ocaml'
+" Customizations {{{
+set enc=utf-8
+set backspace=indent,eol,start  " Make backspace sane.
+set scrolloff=5                 " Add top/bottom scroll margins.
+set history=1000                " Remeber more command line history
+set wildmenu                    " Enhanced completion.
+set wildmode=list:longest       " Act like shell completion.
+set splitbelow splitright       " Windows are created in the direction I read.
+" Make hidden characters look nice when shown.
+set listchars=tab:▷\ ,eol:¬,extends:»,precedes:«
+set colorcolumn=100
+" }}}
 
-" dart
-Plugin 'dart-lang/dart-vim-plugin'
+" Search {{{
+set hlsearch
+set incsearch                   " Search incrementally.
+" Turns off highlight using this key map
+" map <C-c> :noh<cr>
+" treats pattern as case insenstive when all small letters
+set ignorecase smartcase
+" }}}
 
-Plugin 'junegunn/fzf'
-Plugin 'junegunn/fzf.vim'
-
-call vundle#end()
-filetype plugin indent on " enable fietype-specific indenting and pugins
-
-syntax on   " enable syntax highlighting
-
-let mapleader = ","
-let maplocalleader = "\\"
-
-" source $MYVIMRC reloads the saved $MYVIMRC
-:nmap <Leader>s :source $MYVIMRC<cr>
-" opens $MYVIMRC for editing, or use :tabedit $MYVIMRC
-:nmap <Leader>vim :tabedit $MYVIMRC<cr>
-
-:nmap <Leader>n :lnext<cr>
-:nmap <Leader>p :lprev<cr>
-
-" let base16colorspace=256 " Access colors present in 256 colorspace
-set background=light " Setting light mode
-colorscheme my " my custom colorscheme
-
+" Indents {{{
 set smartindent
 set tabstop=4
 set shiftwidth=4
+set smarttab
 set expandtab
-set number
+" }}}
 
-augroup myfiletypes
-    autocmd!
-    autocmd FileType javascript setlocal sw=2
-    autocmd FileType html setlocal sw=2
-    autocmd FileType htmldjango setlocal sw=2
-    autocmd FileType ocaml setlocal sw=2
-    autocmd FileType ocaml setlocal commentstring=(*%s*)
-    au BufRead,BufNewFile *.ml,*.mli compiler ocaml
-    autocmd FileType markdown setlocal spell
-    autocmd FileType markdown setlocal commentstring=<!--%s-->
-augroup END
-
-set backspace=indent,eol,start "backspace over these
-" set cursorline cursorcolumn " precise targetting of words
-set complete=.,w,b,u,U,t,i,d
-
-set scrolloff=5 "keep at least 5 lines above/below
-
-" Sane movements
+" Movement {{{
+" Sane movements, ignore differences in visual v.s. actual lines
 nnoremap j gj
 nnoremap k gk
 
-" Search settings
-set hlsearch " highlight all matches of a search
-set incsearch " searches as you type
+" The default mappings look for { or } on the first column, since most cpp
+" files I edit don't use this K&R style, remap these to something somewhat
+" useful.
+nnoremap [[ ?{$<CR>:nohl<CR>
+nnoremap ][ /{$<CR>:nohl<CR>
+nnoremap ]] /}$<CR>:nohl<CR>
+nnoremap [] ?}$<CR>:nohl<CR>
+" }}}
 
-set list listchars=tab:↣↣,trail:∙,extends:>,precedes:<
+" Buffers {{{
+" Since I use buffers so much, have an easier mapping for switching.
+nnoremap <silent> ]b :bn<cr>
+nnoremap <silent> [b :bp<cr>
+" }}}
 
-" Turns off highlight using this key map
-map <C-c> :noh<cr>
+nnoremap ]p :set paste<cr>
+nnoremap [p :set nopaste<cr>
 
-" Window switching
-map <c-j> <c-w>j
-map <c-k> <c-w>k
-map <c-l> <c-w>l
-map <c-h> <c-w>h
+" .vimrc {{{
+" opens $MYVIMRC for editing, or use :tabedit $MYVIMRC
+:nmap <Leader>vim :edit $MYVIMRC<cr>
 
-" treats pattern as case insenstive when all small letters
-set ignorecase smartcase
+" source when vimrc is updated
+augroup ReloadVimrcGroup
+  autocmd!
+  autocmd BufWritePost $MYVIMRC source $MYVIMRC
+augroup END
+" }}}
 
-" disable folding for markdown files
-let g:vim_markdown_folding_disabled=1
+" Used to be NERDTree {{{
+let g:netrw_banner = 0
+nnoremap <leader>d :Lexplore<CR>
+" }}}
 
-" Buffers
-nnoremap <silent> [b :bprevious<CR>
-nnoremap <silent> ]b :bnext<CR>
-nnoremap <silent> ]B :bfirst<CR>
-nnoremap <silent> ]B :blast<CR>
-nnoremap <leader>q :bd<CR>
-
-set hidden
-
-" Allows saving the file using Ctrl-S in normal and insert mode
-" Note that this requires terminal to ignore Ctrl-S
-" for most terminal just add this to your .bashrc
-"     stty -ixon
-" nnoremap <C-S> :<C-u>update<CR>
-" inoremap <c-s> <c-o>:update<CR>
-nnoremap <leader>a :update<CR>
-inoremap jf <Esc>
-
-" NERDTree config
-let NERDTreeChDirMode=2
-" maybe set NERDTreeRespectWildIgnore to 1, then can reuse wildignore
-let NERDTreeRespectWildIgnore=1
-" let NERDTreeSortOrder=['^__\.py$', '\/$', '*', '\.swp$',  '\~$']
-let NERDTreeShowBookmarks=1
-nnoremap <leader>d :NERDTreeToggle<CR>
-nnoremap <leader>f :NERDTreeFind<CR>
-
-" vim-airline config
-let g:airline_theme='dark'
-let g:airline#extensions#tabline#enabled = 1
-" default value for b
-" let g:airline_section_b = '%{airline#util#wrap(airline#extensions#hunks#get_hunks(),0)}%{airline#util#wrap(airline#extensions#branch#get_head(),0)}}'
-" let g:airline_section_b = '%{airline#util#wrap(airline#extensions#hunks#get_hunks(),0)}'
-" default value for y
-" let g:airline_section_y = '%{airline#util#wrap(airline#parts#ffenc(),0)}'
-let g:airline_section_y = ''
-" default value for z
-" let g:airline_section_z = '%3p%% %#__accent_bold#%{g:airline_symbols.linenr}%4l%#__restore__#%#__accent_bold#/%L%{g:airline_symbols.maxlinenr}%#__restore__# :%3v'
-let g:airline_section_z = '%4l/%L %3v'
-
-" Trigger configuration. Do not use <tab> if you use
-" https://github.com/Valloric/YouCompleteMe.
-let g:UltiSnipsExpandTrigger="<c-j>"
-
-" YouCompleteMe
-" nnoremap <leader>d :YcmCompleter GoToDeclaration<CR>
-" nnoremap <leader>g :YcmCompleter GoToDefinition<CR>
-
-set wildignore+=*/tmp/*,*.so,*.swp,*.zip
-set wildignore+=*.pyc
-set wildignore+=*.cmi,*.cmo
-set wildignore+=*/node_modules/*
-set wildignore+=*/build/*
-set wildignore+=*/_build/*
-
-" For ctrlp
-let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn)$'
-let g:ctrlp_funky_matchtype = 'path'
-
-" For vim-gitgutter
-let g:gitgutter_realtime = 0
-
-" Syntastic file checkers config
-let g:syntastic_python_checkers = ['python', 'pyflakes', 'pep8']
-let g:syntastic_javascript_checkers = ['eslint', 'jshint', 'gjslint']
-let g:syntastic_ocaml_checkers = ['merlin']
-
-" Vimux
+" Vimux {{{
 nnoremap <leader>vl :VimuxRunLastCommand<CR>
 nnoremap <leader>vp :VimuxPromptCommand<CR>
-nnoremap <leader>vq :VimuxCloseRunner<CR>
 
-" Tagbar
-nmap <F8> :TagbarToggle<CR>
-
-" Ocaml
-" nnoremap <leader>ot :MerlinTypeOf<CR>
-" nnoremap <leader>od :MerlinDestruct<CR>
-" nnoremap <leader>od :MerlinShrinkEnclosing<CR>
-" nnoremap <leader>od :MerlinGrowEnclosing<CR>
-nnoremap <localleader>md :MerlinDestruct<CR>
-" similar to how unimpaired binds keys
-nnoremap [m :MerlinShrinkEnclosing<CR>
-nnoremap ]m :MerlinGrowEnclosing<CR>
-
-" ## added by OPAM user-setup for vim / base ## 93ee63e278bdfc07d1139a748ed3fff2 ## you can edit, but keep this line
-let s:opam_share_dir = system("opam config var share")
-let s:opam_share_dir = substitute(s:opam_share_dir, '[\r\n]*$', '', '')
-
-let s:opam_configuration = {}
-
-function! OpamConfOcpIndent()
-  execute "set rtp^=" . s:opam_share_dir . "/ocp-indent/vim"
+" Runs the previous bash command in the runner pane
+function! VimuxRunPrev()
+  call VimuxOpenRunner()
+  call VimuxSendKeys("C-p")
+  call VimuxSendKeys("Enter")
 endfunction
-let s:opam_configuration['ocp-indent'] = function('OpamConfOcpIndent')
 
-function! OpamConfOcpIndex()
-  execute "set rtp+=" . s:opam_share_dir . "/ocp-index/vim"
-endfunction
-let s:opam_configuration['ocp-index'] = function('OpamConfOcpIndex')
+nnoremap <leader>l :call VimuxRunPrev()<CR>
+" }}}
 
-function! OpamConfMerlin()
-  let l:dir = s:opam_share_dir . "/merlin/vim"
-  execute "set rtp+=" . l:dir
-endfunction
-let s:opam_configuration['merlin'] = function('OpamConfMerlin')
+" fzf {{{
+" use fzf to replace ctrl-p
+set rtp+=~/.fzf
+:nnoremap <C-p> :Files<CR>
+" C-b is used to scroll window backwards, I usually use C-u for it.
+:nnoremap <C-b> :Buffers<CR>
+" search search history
+:nnoremap <C-n> :History/<CR>
+" search (e)x- commands history
+:nnoremap <C-e> :History:<CR>
+" }}}
 
-let s:opam_packages = ["ocp-indent", "ocp-index", "merlin"]
-let s:opam_check_cmdline = ["opam list --installed --short --safe --color=never"] + s:opam_packages
-let s:opam_available_tools = split(system(join(s:opam_check_cmdline)))
-for tool in s:opam_packages
-  " Respect package order (merlin should be after ocp-index)
-  if count(s:opam_available_tools, tool) > 0
-    call s:opam_configuration[tool]()
-  endif
-endfor
-" ## end of OPAM user-setup addition for vim / base ## keep this line
-" ## added by OPAM user-setup for vim / ocp-indent ## 9cf34f5f05690737369f61917052783c ## you can edit, but keep this line
-if count(s:opam_available_tools,"ocp-indent") == 0
-  source "/Users/ngzhian/.opam/system/share/vim/syntax/ocp-indent.vim"
+" EasyMotion {{{
+let g:EasyMotion_do_mapping = 0 " Disable default mappings
+" Jump to anywhere you want with minimal keystrokes, with just one key binding.
+" `s{char}{label}`
+nmap S <Plug>(easymotion-overwin-f)
+" Turn on case insensitive feature
+let g:EasyMotion_smartcase = 1
+" JK motions: Line motions
+map <Leader>j <Plug>(easymotion-j)
+map <Leader>k <Plug>(easymotion-k)
+" }}}
+
+" For asyncomplete {{{
+inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<cr>"
+" }}}
+
+" LSP {{{
+if executable('clangd')
+    au User lsp_setup call lsp#register_server({
+        \ 'name': 'clangd',
+        \ 'cmd': {server_info->['clangd', '--background-index', '--clang-tidy']},
+        \ 'whitelist': ['c', 'cpp'],
+        \ })
 endif
-" ## end of OPAM user-setup addition for vim / ocp-indent ## keep this line
+
+if executable('ocamllsp')
+    au User lsp_setup call lsp#register_server({
+        \ 'name': 'ocamllsp',
+        \ 'cmd': {server_info->['ocamllsp']},
+        \ 'whitelist': ['ocaml'],
+        \ })
+endif
+
+" From https://github.com/prabirshrestha/vim-lsp.
+function! s:on_lsp_buffer_enabled() abort
+    setlocal omnifunc=lsp#complete
+    setlocal signcolumn=yes
+    " follow how gd works by default, with is go to local declaration
+    nmap <buffer> gd <plug>(lsp-declaration)
+    nmap <buffer> gD <plug>(lsp-definition)
+    " gr does some replacement of virtual characters, which I've never used.
+    nmap <buffer> gr <plug>(lsp-references)
+    nmap <buffer> <f2> <plug>(lsp-rename)
+    " refer to doc to add more commands
+    " TODO some other mapping?
+    nmap <buffer> <f3> <plug>(lsp-document-diagnostics)
+endfunction
+
+augroup lsp_install
+    au!
+    " call s:on_lsp_buffer_enabled only for languages that has the server registered.
+    autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
+augroup END
+
+let g:lsp_diagnostics_echo_cursor=1
+" let g:lsp_diagnostics_float_cursor=1
+
+" Logging to debug lsp
+" let g:lsp_log_verbose = 1
+" let g:lsp_log_file = expand('~/vim-lsp.log')
+
+" }}}
+
+" Git/Hg commit messages {{{
+augroup CommitMessages
+  autocmd!
+  autocmd FileType gitcommit set spell colorcolumn=72
+  autocmd FileType hgcommit set spell colorcolumn=72
+augroup END
+" }}}
+
+" Misc helper functions copied from some place.
+" :VC map to view output of map in a buffer
+command! -nargs=1 VC  call ExecuteVimCommandAndViewOutput(<q-args>)
+
+function! ExecuteVimCommandAndViewOutput(cmd)
+  redir @v
+  silent execute a:cmd
+  redir END
+  new
+  set buftype=nofile
+  put v
+endfunction
+" }}}
+
+" {{{ Abberviations
+abbreviate tf TurboFan
+abbreviate lo Liftoff
+" }}}
