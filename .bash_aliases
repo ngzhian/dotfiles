@@ -22,6 +22,7 @@ alias d='git diff'
 alias xclipb='xclip -selection clipboard'
 
 alias v='vim'
+alias vim-open-last='vim $(git show --stat --name-only --oneline | tail --lines=+2)'
 
 # chrome/v8/wasm {{{
 alias gm='$HOME/ssd1/v8/v8/tools/dev/gm.py'

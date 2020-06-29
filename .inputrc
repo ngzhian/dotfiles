@@ -1,0 +1,20 @@
+# Some ideas from https://github.com/paulirish/dotfiles/blob/master/.inputrc
+set completion-ignore-case on
+set completion-map-case on
+set colored-completion-prefix on
+set colored-stats on
+# set completion-prefix-display-length 5
+set mark-symlinked-directories on
+set match-hidden-files off
+set visible-stats on
+set skip-completed-text on
+set input-meta on
+set output-meta on
+set convert-meta off
+# "\e[1;5C": forward-word
+# "\e[1;5D": backward-word
+# "\e[5C": forward-word
+# "\e[5D": backward-word
+# meta left and meta right arrows
+"\e\e[C": forward-word
+"\e\e[D": backward-word

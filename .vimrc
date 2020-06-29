@@ -1,4 +1,5 @@
 " {{{ TOC
+" - Prologue
 " - Plugins installation
 " - General customizations
 " - Plugin customization
@@ -8,12 +9,15 @@
 " - Misc helpers
 " }}}
 
+" Prologue {{{
 " Enable modern Vim features not compatible with Vi spec.
 set nocompatible
 
 " Needed for now by Vundle
 filetype off
+" }}}
 
+" {{{ Plugins installation
 " set the runtime path to include Vundle and initialize
 set rtp+=~/.vim/bundle/Vundle.vim
 if isdirectory(expand('$HOME/.vim/bundle/Vundle.vim'))
@@ -52,20 +56,21 @@ if isdirectory(expand('$HOME/.vim/bundle/Vundle.vim'))
   
   " Easily comment out lines/selection with gc
   Plugin 'tpope/vim-commentary'
+  " Helpers to deal with 'surrounding' stuff
+  Plugin 'tpope/vim-surround'
 
   call vundle#end()
 else
   echomsg 'Vundle is not installed. You can install Vundle from'
       \ 'https://github.com/VundleVim/Vundle.vim'
 endif
-
-" Enable filetype detection and turn on plugin and indent files
-filetype plugin indent on
-
-" Enable syntax (lexcial) highlighting
-syntax on
+" }}}
 
 " Customizations {{{
+" Enable filetype detection and turn on plugin and indent files
+filetype plugin indent on
+" Enable syntax (lexcial) highlighting
+syntax on
 set enc=utf-8
 set backspace=indent,eol,start  " Make backspace sane.
 set scrolloff=5                 " Add top/bottom scroll margins.
@@ -74,8 +79,15 @@ set wildmenu                    " Enhanced completion.
 set wildmode=list:longest       " Act like shell completion.
 set splitbelow splitright       " Windows are created in the direction I read.
 " Make hidden characters look nice when shown.
+" doesn't really work without set list
 set listchars=tab:▷\ ,eol:¬,extends:»,precedes:«
 set colorcolumn=100
+set fillchars=vert:│ " separator between windows
+set noswapfile
+
+" Slightly stolen from vim-unimpaired
+nnoremap ]p :set paste<cr>
+nnoremap [p :set nopaste<cr>
 " }}}
 
 " Search {{{
@@ -89,8 +101,7 @@ set ignorecase smartcase
 
 " Indents {{{
 set smartindent
-set tabstop=4
-set shiftwidth=4
+set shiftwidth=2
 set smarttab
 set expandtab
 " }}}
@@ -115,9 +126,6 @@ nnoremap <silent> ]b :bn<cr>
 nnoremap <silent> [b :bp<cr>
 " }}}
 
-nnoremap ]p :set paste<cr>
-nnoremap [p :set nopaste<cr>
-
 " .vimrc {{{
 " opens $MYVIMRC for editing, or use :tabedit $MYVIMRC
 :nmap <Leader>vim :edit $MYVIMRC<cr>
@@ -125,6 +133,7 @@ nnoremap [p :set nopaste<cr>
 " source when vimrc is updated
 augroup ReloadVimrcGroup
   autocmd!
+  autocmd FileType vim set foldmethod=marker
   autocmd BufWritePost $MYVIMRC source $MYVIMRC
 augroup END
 " }}}
@@ -198,7 +207,7 @@ endif
 " From https://github.com/prabirshrestha/vim-lsp.
 function! s:on_lsp_buffer_enabled() abort
     setlocal omnifunc=lsp#complete
-    setlocal signcolumn=yes
+    setlocal signcolumn=auto
     " follow how gd works by default, with is go to local declaration
     nmap <buffer> gd <plug>(lsp-declaration)
     nmap <buffer> gD <plug>(lsp-definition)
@@ -208,6 +217,18 @@ function! s:on_lsp_buffer_enabled() abort
     " refer to doc to add more commands
     " TODO some other mapping?
     nmap <buffer> <f3> <plug>(lsp-document-diagnostics)
+    " TODO does this work?
+    vnoremap <buffer> gp :<c-u>LspDocumentRangeFormatSync<cr>
+    nnoremap <buffer> gp :<c-u>LspDocumentFormatSync<cr>
+
+    " gq is already the formatting motion, but let's reuse it.
+    " Since this is within a lsp install guard, it shouldn't affect the usual
+    " functioning of gq in, say, commit messages.
+    vnoremap <buffer> gq :<c-u>LspDocumentRangeFormatSync<cr>
+    nnoremap <buffer> gq :<c-u>LspDocumentFormatSync<cr>
+
+    vnoremap <buffer> <C-f> :<c-u>LspDocumentRangeFormatSync<cr>
+    nnoremap <buffer> <C-f> :<c-u>LspDocumentFormatSync<cr>
 endfunction
 
 augroup lsp_install
@@ -233,7 +254,7 @@ augroup CommitMessages
 augroup END
 " }}}
 
-" Misc helper functions copied from some place.
+" Misc helper functions copied from some place. {{{
 " :VC map to view output of map in a buffer
 command! -nargs=1 VC  call ExecuteVimCommandAndViewOutput(<q-args>)
 
@@ -251,3 +272,26 @@ endfunction
 abbreviate tf TurboFan
 abbreviate lo Liftoff
 " }}}
+
+" bashrc {{{
+" source when vimrc is updated
+augroup Bashrc
+  autocmd!
+  autocmd FileType sh set foldmethod=marker
+augroup END
+" }}}
+
+" {{{ Syntax highlighting
+" Some custom syntax to match tmux, originally from
+" https://github.com/vim-airline/vim-airline-themes/blob/master/autoload/airline/themes/papercolor.vim
+hi StatusLine cterm=bold ctermfg=240 ctermbg=255
+hi StatusLineNC cterm=NONE ctermfg=255 ctermbg=24
+" The separator color is slightly different from tmux, which is 31, not sure
+" if that's what i want, let's try it and see.
+hi VertSplit cterm=NONE ctermfg=250
+hi ColorColumn ctermbg=255
+hi Folded ctermfg=24 ctermbg=15
+" }}}
+
+inoremap jj <C-c>:w<cr>
+" nnoremap ]p :set paste<cr>
