@@ -1,3 +1,4 @@
+#!/bin/bash
 # Helper script to backup/restore dotfiles, to keep dev env somewhat *in sync*.
 
 # The rule is that dotfiles are maintained in this directory, and copy pasted from it.
@@ -11,6 +12,8 @@ DOTFILES="$HOME/.dotfiles"
 )
 
 # Poor man associative array...
+# Using this because I might want to back up certain files as different names.
+# Mapping from "local" to "remote"/backed-up name
 files=(
   .tmux.conf .tmux.conf
   .vimrc .vimrc
@@ -22,16 +25,28 @@ files=(
   bin/backup-dotfiles.sh bin/backup-dotfiles.sh
 )
 
+# Check that I did not mess up the files array.
 count=${#files[*]}
 if [[ $((count % 2)) -ne 0 ]]; then
   echo "Wrong number of files specified in 'files'." >&2
   exit 1
 fi
+echo $count
+
+# Diff local dotfiles and backed up files
+diff_files() {
+  local i=0
+  while [[ i -lt count ]]; do
+    from=$i
+    to=$((i+1))
+    diff -u "$HOME/${files[from]}" "$DOTFILES/${files[to]}"
+    i=$((i+2))
+  done
+}
 
 # Backup local dotfiles into $DOTFILES.
 backup() {
-  i=0
-  mkdir -p "$(dirname $DOTFILES/$f)"
+  local i=0
   while [[ i -lt count ]]; do
     from=$i
     to=$((i+1))
@@ -43,7 +58,6 @@ backup() {
 # Restore $DOTFILES to local dotfiles.
 restore() {
   i=0
-  mkdir -p "$(dirname $DOTFILES/$f)"
   while [[ i -lt count ]]; do
     from=$((i+1))
     to=$i
@@ -57,7 +71,9 @@ if [[ $# -eq 0 ]]; then
   exit 0
 fi
 
-if [[ $1 = "--backup" ]]; then
+if [[ $1 = "--diff" ]]; then
+  diff_files
+elif [[ $1 = "--backup" ]]; then
   backup
 elif [[ $1 = "--restore" ]]; then
   restore
