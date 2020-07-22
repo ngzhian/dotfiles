@@ -84,6 +84,7 @@ set listchars=tab:▷\ ,eol:¬,extends:»,precedes:«
 set colorcolumn=100
 set fillchars=vert:│ " separator between windows
 set noswapfile
+set mouse="a" " Enable mouse, may be useful for terminal-debug.
 
 " Slightly stolen from vim-unimpaired
 nnoremap ]p :set paste<cr>
@@ -107,7 +108,7 @@ set expandtab
 " }}}
 
 " Movement {{{
-" Sane movements, ignore differences in visual v.s. actual lines
+" Movements that ignore differences in visual v.s. actual lines
 nnoremap j gj
 nnoremap k gk
 
@@ -217,9 +218,6 @@ function! s:on_lsp_buffer_enabled() abort
     " refer to doc to add more commands
     " TODO some other mapping?
     nmap <buffer> <f3> <plug>(lsp-document-diagnostics)
-    " TODO does this work?
-    vnoremap <buffer> gp :<c-u>LspDocumentRangeFormatSync<cr>
-    nnoremap <buffer> gp :<c-u>LspDocumentFormatSync<cr>
 
     " gq is already the formatting motion, but let's reuse it.
     " Since this is within a lsp install guard, it shouldn't affect the usual
@@ -227,8 +225,8 @@ function! s:on_lsp_buffer_enabled() abort
     vnoremap <buffer> gq :<c-u>LspDocumentRangeFormatSync<cr>
     nnoremap <buffer> gq :<c-u>LspDocumentFormatSync<cr>
 
-    vnoremap <buffer> <C-f> :<c-u>LspDocumentRangeFormatSync<cr>
-    nnoremap <buffer> <C-f> :<c-u>LspDocumentFormatSync<cr>
+    " Might want this to be :LspWorkspaceSymbol, but try this out for now.
+    nnoremap <buffer> K :LspHover<cr>
 endfunction
 
 augroup lsp_install
