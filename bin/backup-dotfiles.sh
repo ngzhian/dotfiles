@@ -23,6 +23,7 @@ files=(
   .vim/spell/en.utf-8.add .vim/spell/en.utf-8.add
   .vim/spell/en.utf-8.add.spl .vim/spell/en.utf-8.add.spl
   bin/backup-dotfiles.sh bin/backup-dotfiles.sh
+  bin/dev.sh bin/dev.sh
 )
 
 # Check that I did not mess up the files array.
@@ -31,7 +32,6 @@ if [[ $((count % 2)) -ne 0 ]]; then
   echo "Wrong number of files specified in 'files'." >&2
   exit 1
 fi
-echo $count
 
 # Diff local dotfiles and backed up files
 diff_files() {

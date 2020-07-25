@@ -53,11 +53,24 @@ if isdirectory(expand('$HOME/.vim/bundle/Vundle.vim'))
   Plugin 'prabirshrestha/asyncomplete-buffer.vim'
   " Use file names as autocomplete source
   Plugin 'prabirshrestha/asyncomplete-file.vim'
+  " Use words in tmux panes for completion.
+  Bundle 'wellle/tmux-complete.vim'
+
+  if has('python3')
+    " Track the engine.
+    Plugin 'SirVer/ultisnips'
+    " Snippets are separated from the engine. Add this if you want them:
+    Plugin 'honza/vim-snippets'
+    " UltiSnips source for asyncomplete.vim
+    Plugin 'prabirshrestha/asyncomplete-ultisnips.vim'
+  endif
   
   " Easily comment out lines/selection with gc
   Plugin 'tpope/vim-commentary'
   " Helpers to deal with 'surrounding' stuff
   Plugin 'tpope/vim-surround'
+  " Vim plugin for Git, or Git plugin for Vim.
+  Plugin 'tpope/vim-fugitive'
 
   call vundle#end()
 else
@@ -89,6 +102,14 @@ set mouse="a" " Enable mouse, may be useful for terminal-debug.
 " Slightly stolen from vim-unimpaired
 nnoremap ]p :set paste<cr>
 nnoremap [p :set nopaste<cr>
+" More stolen from vim-unimpaired
+" q is for (q)uickfix list
+nnoremap ]q :cnext<cr>
+nnoremap [q :cprev<cr>
+nnoremap ]Q :cfirst<cr>
+nnoremap [Q :clast<cr>
+
+inoremap jj <C-c>:w<cr>
 " }}}
 
 " Search {{{
@@ -186,6 +207,23 @@ map <Leader>k <Plug>(easymotion-k)
 inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<cr>"
+
+if has('python3')
+  " Ctrl-y is used to accept a suggestion from the completion menu,
+  " with async complete, we use tab to change the selection.
+  let g:UltiSnipsExpandTrigger="<c-y>"
+  " call asyncomplete#register_source(asyncomplete#sources#ultisnips#get_source_options({
+  "       \ 'name': 'ultisnips',
+  "       \ 'whitelist': ['*'],
+  "       \ 'completor': function('asyncomplete#sources#ultisnips#completor'),
+  "       \ }))
+  au User asyncomplete_setup call asyncomplete#register_source(asyncomplete#sources#ultisnips#get_source_options({
+        \ 'name': 'ultisnips',
+        \ 'whitelist': ['*'],
+        \ 'completor': function('asyncomplete#sources#ultisnips#completor')
+        \ }))
+
+endif
 " }}}
 
 " LSP {{{
@@ -272,7 +310,6 @@ abbreviate lo Liftoff
 " }}}
 
 " bashrc {{{
-" source when vimrc is updated
 augroup Bashrc
   autocmd!
   autocmd FileType sh set foldmethod=marker
@@ -291,5 +328,9 @@ hi ColorColumn ctermbg=255
 hi Folded ctermfg=24 ctermbg=15
 " }}}
 
-inoremap jj <C-c>:w<cr>
-" nnoremap ]p :set paste<cr>
+" rst {{{
+augroup Rst
+  autocmd!
+  autocmd FileType rst set spell
+augroup END
+" }}}
