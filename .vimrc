@@ -87,21 +87,32 @@ syntax on
 set enc=utf-8
 set backspace=indent,eol,start  " Make backspace sane.
 set scrolloff=5                 " Add top/bottom scroll margins.
-set history=1000                " Remeber more command line history
+set history=5000                " Remeber more command line history
 set wildmenu                    " Enhanced completion.
 set wildmode=list:longest       " Act like shell completion.
 set splitbelow splitright       " Windows are created in the direction I read.
 " Make hidden characters look nice when shown.
 " doesn't really work without set list
-set listchars=tab:▷\ ,eol:¬,extends:»,precedes:«
+set list
+set listchars=tab:▷\ ,trail:¬,extends:»,precedes:«
+" set listchars=tab:▷\ ,eol:¬,extends:»,precedes:«
 set colorcolumn=100
 set fillchars=vert:│ " separator between windows
 set noswapfile
 set mouse="a" " Enable mouse, may be useful for terminal-debug.
+set laststatus=2 " Always show a status line
+set matchpairs+=<:> " Jump between angle brackets.
+" }}}
+
+" Mappings {{{
+" From https://github.com/mopp/dotfiles/blob/master/.vimrc
+" Set <Leader> and <LocalLeader>.
+let g:mapleader = ' '
+nnoremap <silent> <Leader>w :<C-U>write<CR>
 
 " Slightly stolen from vim-unimpaired
-nnoremap ]p :set paste<cr>
-nnoremap [p :set nopaste<cr>
+nnoremap [p :set paste<cr>
+nnoremap ]p :set nopaste<cr>
 " More stolen from vim-unimpaired
 " q is for (q)uickfix list
 nnoremap ]q :cnext<cr>
@@ -109,7 +120,35 @@ nnoremap [q :cprev<cr>
 nnoremap ]Q :cfirst<cr>
 nnoremap [Q :clast<cr>
 
-inoremap jj <C-c>:w<cr>
+nnoremap  [n :set number<cr>
+nnoremap  ]n :set nonumber<cr>
+nnoremap  [r :set relativenumber<cr>
+nnoremap  ]r :set norelativenumber<cr>
+" tried [s and ]s but that conflicts
+nnoremap  [os :set spell<cr>
+nnoremap  ]os :set nospell<cr>
+
+inoremap jj <C-[><cr>
+
+" Buffers {{{
+" Since I use buffers so much, have an easier mapping for switching.
+nnoremap <silent> ]b :bn<cr>
+nnoremap <silent> [b :bp<cr>
+" }}}
+
+" Movement {{{
+" Movements that ignore differences in visual v.s. actual lines
+nnoremap j gj
+nnoremap k gk
+
+" The default mappings look for { or } on the first column, since most cpp
+" files I edit don't use this K&R style, remap these to something somewhat
+" useful.
+nnoremap [[ ?{$<CR>:nohl<CR>
+nnoremap ][ /{$<CR>:nohl<CR>
+nnoremap ]] /}$<CR>:nohl<CR>
+nnoremap [] ?}$<CR>:nohl<CR>
+" }}}
 " }}}
 
 " Search {{{
@@ -128,41 +167,45 @@ set smarttab
 set expandtab
 " }}}
 
-" Movement {{{
-" Movements that ignore differences in visual v.s. actual lines
-nnoremap j gj
-nnoremap k gk
-
-" The default mappings look for { or } on the first column, since most cpp
-" files I edit don't use this K&R style, remap these to something somewhat
-" useful.
-nnoremap [[ ?{$<CR>:nohl<CR>
-nnoremap ][ /{$<CR>:nohl<CR>
-nnoremap ]] /}$<CR>:nohl<CR>
-nnoremap [] ?}$<CR>:nohl<CR>
-" }}}
-
-" Buffers {{{
-" Since I use buffers so much, have an easier mapping for switching.
-nnoremap <silent> ]b :bn<cr>
-nnoremap <silent> [b :bp<cr>
-" }}}
-
-" .vimrc {{{
 " opens $MYVIMRC for editing, or use :tabedit $MYVIMRC
 :nmap <Leader>vim :edit $MYVIMRC<cr>
 
-" source when vimrc is updated
-augroup ReloadVimrcGroup
+" autocommands {{{
+augroup ngzhian
   autocmd!
+  " Save everytime I exit insert mode
+  autocmd InsertLeave * :silent w
+  " Turning off paste when escape insert mode.
+  autocmd InsertLeave * setlocal nopaste
+
+  " .vimrc {{{
   autocmd FileType vim set foldmethod=marker
+  " source when vimrc is updated
   autocmd BufWritePost $MYVIMRC source $MYVIMRC
+  " }}}
+
+  " Git/Hg commit messages {{{
+  autocmd!
+  autocmd FileType gitcommit set spell colorcolumn=72
+  autocmd FileType hgcommit set spell colorcolumn=72
+  " }}}
+
+  " bashrc {{{
+  autocmd!
+  autocmd FileType sh set foldmethod=marker
+  " }}}
+
+  " rst {{{
+  autocmd!
+  autocmd FileType rst set spell
+  " }}}
+
 augroup END
 " }}}
 
 " Used to be NERDTree {{{
 let g:netrw_banner = 0
-nnoremap <leader>d :Lexplore<CR>
+nnoremap <leader>d :Vexplore<CR>
 " }}}
 
 " Vimux {{{
@@ -182,13 +225,17 @@ nnoremap <leader>l :call VimuxRunPrev()<CR>
 " fzf {{{
 " use fzf to replace ctrl-p
 set rtp+=~/.fzf
-:nnoremap <C-p> :Files<CR>
+nnoremap <C-p> :Files<CR>
+nnoremap <leader>f :Files<CR>
 " C-b is used to scroll window backwards, I usually use C-u for it.
-:nnoremap <C-b> :Buffers<CR>
+nnoremap <C-b> :Buffers<CR>
+nnoremap <leader>b :Buffers<CR>
 " search search history
-:nnoremap <C-n> :History/<CR>
+nnoremap <C-n> :History/<CR>
+nnoremap <leader>/ :History/<CR>
 " search (e)x- commands history
-:nnoremap <C-e> :History:<CR>
+nnoremap <C-e> :History:<CR>
+nnoremap <leader>: :History:<CR>
 " }}}
 
 " EasyMotion {{{
@@ -196,6 +243,7 @@ let g:EasyMotion_do_mapping = 0 " Disable default mappings
 " Jump to anywhere you want with minimal keystrokes, with just one key binding.
 " `s{char}{label}`
 nmap S <Plug>(easymotion-overwin-f)
+nmap <leader>s <Plug>(easymotion-overwin-f)
 " Turn on case insensitive feature
 let g:EasyMotion_smartcase = 1
 " JK motions: Line motions
@@ -212,11 +260,6 @@ if has('python3')
   " Ctrl-y is used to accept a suggestion from the completion menu,
   " with async complete, we use tab to change the selection.
   let g:UltiSnipsExpandTrigger="<c-y>"
-  " call asyncomplete#register_source(asyncomplete#sources#ultisnips#get_source_options({
-  "       \ 'name': 'ultisnips',
-  "       \ 'whitelist': ['*'],
-  "       \ 'completor': function('asyncomplete#sources#ultisnips#completor'),
-  "       \ }))
   au User asyncomplete_setup call asyncomplete#register_source(asyncomplete#sources#ultisnips#get_source_options({
         \ 'name': 'ultisnips',
         \ 'whitelist': ['*'],
@@ -228,7 +271,7 @@ endif
 
 " LSP {{{
 if executable('clangd')
-    au User lsp_setup call lsp#register_server({
+  au User lsp_setup call lsp#register_server({
         \ 'name': 'clangd',
         \ 'cmd': {server_info->['clangd', '--background-index', '--clang-tidy']},
         \ 'whitelist': ['c', 'cpp'],
@@ -236,7 +279,7 @@ if executable('clangd')
 endif
 
 if executable('ocamllsp')
-    au User lsp_setup call lsp#register_server({
+  au User lsp_setup call lsp#register_server({
         \ 'name': 'ocamllsp',
         \ 'cmd': {server_info->['ocamllsp']},
         \ 'whitelist': ['ocaml'],
@@ -245,32 +288,32 @@ endif
 
 " From https://github.com/prabirshrestha/vim-lsp.
 function! s:on_lsp_buffer_enabled() abort
-    setlocal omnifunc=lsp#complete
-    setlocal signcolumn=auto
-    " follow how gd works by default, with is go to local declaration
-    nmap <buffer> gd <plug>(lsp-declaration)
-    nmap <buffer> gD <plug>(lsp-definition)
-    " gr does some replacement of virtual characters, which I've never used.
-    nmap <buffer> gr <plug>(lsp-references)
-    nmap <buffer> <f2> <plug>(lsp-rename)
-    " refer to doc to add more commands
-    " TODO some other mapping?
-    nmap <buffer> <f3> <plug>(lsp-document-diagnostics)
+  setlocal omnifunc=lsp#complete
+  setlocal signcolumn=auto
+  " follow how gd works by default, with is go to local declaration
+  nmap <buffer> gd <plug>(lsp-declaration)
+  nmap <buffer> gD <plug>(lsp-definition)
+  " gr does some replacement of virtual characters, which I've never used.
+  nmap <buffer> gr <plug>(lsp-references)
+  nmap <buffer> <f2> <plug>(lsp-rename)
+  " refer to doc to add more commands
+  " TODO some other mapping?
+  nmap <buffer> <f3> <plug>(lsp-document-diagnostics)
 
-    " gq is already the formatting motion, but let's reuse it.
-    " Since this is within a lsp install guard, it shouldn't affect the usual
-    " functioning of gq in, say, commit messages.
-    vnoremap <buffer> gq :<c-u>LspDocumentRangeFormatSync<cr>
-    nnoremap <buffer> gq :<c-u>LspDocumentFormatSync<cr>
+  " gq is already the formatting motion, but let's reuse it.
+  " Since this is within a lsp install guard, it shouldn't affect the usual
+  " functioning of gq in, say, commit messages.
+  vnoremap <buffer> gq :<c-u>LspDocumentRangeFormatSync<cr>
+  nnoremap <buffer> gq :<c-u>LspDocumentFormatSync<cr>
 
-    " Might want this to be :LspWorkspaceSymbol, but try this out for now.
-    nnoremap <buffer> K :LspHover<cr>
+  " Might want this to be :LspWorkspaceSymbol, but try this out for now.
+  nnoremap <buffer> K :LspHover<cr>
 endfunction
 
 augroup lsp_install
-    au!
-    " call s:on_lsp_buffer_enabled only for languages that has the server registered.
-    autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
+  au!
+  " call s:on_lsp_buffer_enabled only for languages that has the server registered.
+  autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
 augroup END
 
 let g:lsp_diagnostics_echo_cursor=1
@@ -280,14 +323,6 @@ let g:lsp_diagnostics_echo_cursor=1
 " let g:lsp_log_verbose = 1
 " let g:lsp_log_file = expand('~/vim-lsp.log')
 
-" }}}
-
-" Git/Hg commit messages {{{
-augroup CommitMessages
-  autocmd!
-  autocmd FileType gitcommit set spell colorcolumn=72
-  autocmd FileType hgcommit set spell colorcolumn=72
-augroup END
 " }}}
 
 " Misc helper functions copied from some place. {{{
@@ -309,12 +344,7 @@ abbreviate tf TurboFan
 abbreviate lo Liftoff
 " }}}
 
-" bashrc {{{
-augroup Bashrc
-  autocmd!
-  autocmd FileType sh set foldmethod=marker
-augroup END
-" }}}
+" set statusline=%<%F\ %m%r%h%w%y%{'['.(&fenc!=''?&fenc:&enc).']['.&fileformat.']'}%=%l/%L,%c%V%8P
 
 " {{{ Syntax highlighting
 " Some custom syntax to match tmux, originally from
@@ -326,11 +356,4 @@ hi StatusLineNC cterm=NONE ctermfg=255 ctermbg=24
 hi VertSplit cterm=NONE ctermfg=250
 hi ColorColumn ctermbg=255
 hi Folded ctermfg=24 ctermbg=15
-" }}}
-
-" rst {{{
-augroup Rst
-  autocmd!
-  autocmd FileType rst set spell
-augroup END
 " }}}
