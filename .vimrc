@@ -185,18 +185,15 @@ augroup ngzhian
   " }}}
 
   " Git/Hg commit messages {{{
-  autocmd!
   autocmd FileType gitcommit set spell colorcolumn=72
   autocmd FileType hgcommit set spell colorcolumn=72
   " }}}
 
   " bashrc {{{
-  autocmd!
   autocmd FileType sh set foldmethod=marker
   " }}}
 
   " rst {{{
-  autocmd!
   autocmd FileType rst set spell
   " }}}
 
