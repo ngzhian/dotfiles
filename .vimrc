@@ -128,7 +128,7 @@ nnoremap  ]r :set norelativenumber<cr>
 nnoremap  [os :set spell<cr>
 nnoremap  ]os :set nospell<cr>
 
-inoremap jj <C-[><cr>
+inoremap jj <C-[>
 
 " Buffers {{{
 " Since I use buffers so much, have an easier mapping for switching.
@@ -149,6 +149,10 @@ nnoremap ][ /{$<CR>:nohl<CR>
 nnoremap ]] /}$<CR>:nohl<CR>
 nnoremap [] ?}$<CR>:nohl<CR>
 " }}}
+
+" Commentary
+nmap gC gcc
+
 " }}}
 
 " Search {{{
@@ -174,7 +178,7 @@ set expandtab
 augroup ngzhian
   autocmd!
   " Save everytime I exit insert mode
-  autocmd InsertLeave * :silent w
+  " autocmd InsertLeave * :silent w
   " Turning off paste when escape insert mode.
   autocmd InsertLeave * setlocal nopaste
 
@@ -228,10 +232,8 @@ nnoremap <leader>f :Files<CR>
 nnoremap <C-b> :Buffers<CR>
 nnoremap <leader>b :Buffers<CR>
 " search search history
-nnoremap <C-n> :History/<CR>
 nnoremap <leader>/ :History/<CR>
 " search (e)x- commands history
-nnoremap <C-e> :History:<CR>
 nnoremap <leader>: :History:<CR>
 " }}}
 

@@ -18,6 +18,8 @@ alias l='ls -CF'
 alias -- -="cd -"
 alias g='git status'
 alias d='git diff'
+# for typos
+alias gi='git'
 
 alias xclipb='xclip -selection clipboard'
 
