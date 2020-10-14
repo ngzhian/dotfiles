@@ -24,6 +24,8 @@ files=(
   .vim/spell/en.utf-8.add.spl .vim/spell/en.utf-8.add.spl
   bin/backup-dotfiles.sh bin/backup-dotfiles.sh
   bin/dev.sh bin/dev.sh
+  bin/gm_completion.sh bin/gm_completion.sh
+  bin/git-prompt.sh bin/git-prompt.sh
 )
 
 # Check that I did not mess up the files array.
