@@ -236,6 +236,7 @@ nnoremap <leader>b :Buffers<CR>
 nnoremap <leader>/ :History/<CR>
 " search (e)x- commands history
 nnoremap <leader>: :History:<CR>
+nnoremap <leader>; :History:<CR>
 " }}}
 
 " EasyMotion {{{
@@ -342,6 +343,10 @@ endfunction
 " {{{ Abberviations
 abbreviate tf TurboFan
 abbreviate lo Liftoff
+abbreviate v8iwyu v8:7490
+abbreviate v8clean v8:11074
+abbreviate v8extmul v8:11262
+abbreviate v8shuffle v8:11270
 " }}}
 
 " set statusline=%<%F\ %m%r%h%w%y%{'['.(&fenc!=''?&fenc:&enc).']['.&fileformat.']'}%=%l/%L,%c%V%8P
