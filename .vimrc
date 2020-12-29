@@ -227,9 +227,10 @@ nnoremap <leader>l :call VimuxRunPrev()<CR>
 " use fzf to replace ctrl-p
 set rtp+=~/.fzf
 nnoremap <C-p> :Files<CR>
+nnoremap <leader>p :Files<CR>
 nnoremap <leader>f :Files<CR>
 " C-b is used to scroll window backwards, I usually use C-u for it.
-nnoremap <C-b> :Buffers<CR>
+" nnoremap <C-b> :Buffers<CR>
 nnoremap <leader>b :Buffers<CR>
 " search search history
 nnoremap <leader>/ :History/<CR>
