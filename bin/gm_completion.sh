@@ -65,3 +65,4 @@ _my_complete_gm() {
 }
 
 [ -n "$BASH" ] && complete -F _my_complete_gm -o default -o bashdefault gm
+[ -n "$BASH" ] && complete -F _my_complete_gm -o default -o bashdefault gm.py

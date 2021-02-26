@@ -26,6 +26,7 @@ files=(
   bin/dev.sh bin/dev.sh
   bin/gm_completion.sh bin/gm_completion.sh
   bin/git-prompt.sh bin/git-prompt.sh
+  bin/fuzz.sh bin/fuzz.sh
 )
 
 # Check that I did not mess up the files array.

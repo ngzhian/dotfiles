@@ -344,9 +344,21 @@ endfunction
 abbreviate tf TurboFan
 abbreviate lo Liftoff
 abbreviate v8iwyu v8:7490
-abbreviate v8clean v8:11074
+abbreviate v8clean v8:11384
 abbreviate v8extmul v8:11262
+abbreviate v8extadd v8:11086
 abbreviate v8shuffle v8:11270
+abbreviate v8double v8:11265
+abbreviate v8lane v8:10975
+abbreviate v8alltrue v8:11347
+abbreviate v8ne v8:11348
+abbreviate v8eq v8:11215
+" Running out of bits for instruction-codes-ia32
+abbreviate v8ia32op v8:11217
+abbreviate v8pop v8:11002
+abbreviate v8popcnt v8:11002
+abbreviate v8cmp v8:11415
+abbreviate v8abs v8:11416
 " }}}
 
 " set statusline=%<%F\ %m%r%h%w%y%{'['.(&fenc!=''?&fenc:&enc).']['.&fileformat.']'}%=%l/%L,%c%V%8P
