@@ -63,7 +63,7 @@ if [[ -n "$TESTCASE" ]]; then
     echo "${BUILD_DIR}/${FUZZER}" "$TESTCASE"
     "${BUILD_DIR}/${FUZZER}" "$TESTCASE"
   else
-    "${BUILD_DIR}/${FUZZER}" "$TESTCASE" "$MINIMIZE"
+    "${BUILD_DIR}/${FUZZER}" "$TESTCASE" "$MINIMIZE" -max_total_time=6000
   fi
 else 
   "${BUILD_DIR}/${FUZZER}" -max_len=256 -jobs=12

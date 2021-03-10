@@ -359,6 +359,7 @@ abbreviate v8pop v8:11002
 abbreviate v8popcnt v8:11002
 abbreviate v8cmp v8:11415
 abbreviate v8abs v8:11416
+abbreviate v8ship v8:11511
 " }}}
 
 " set statusline=%<%F\ %m%r%h%w%y%{'['.(&fenc!=''?&fenc:&enc).']['.&fileformat.']'}%=%l/%L,%c%V%8P

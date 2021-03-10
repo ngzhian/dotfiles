@@ -39,7 +39,10 @@ function dev() {
       d|devtools)
         topdir="$ssddir/devtools/devtools-frontend"
         ;;
-      s|spec)
+      s|simd)
+        topdir="$HOME/src/simd"
+        ;;
+      spec)
         topdir="$HOME/src/webassembly-spec"
         ;;
       *)
