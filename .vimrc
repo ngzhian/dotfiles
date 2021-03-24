@@ -108,7 +108,7 @@ set matchpairs+=<:> " Jump between angle brackets.
 " From https://github.com/mopp/dotfiles/blob/master/.vimrc
 " Set <Leader> and <LocalLeader>.
 let g:mapleader = ' '
-nnoremap <silent> <Leader>w :<C-U>write<CR>
+nnoremap <silent> <Leader>w :<C-U>wall<CR>
 
 " Slightly stolen from vim-unimpaired
 nnoremap [p :set paste<cr>
@@ -201,8 +201,12 @@ augroup ngzhian
   autocmd FileType rst set spell
   " }}}
 
+  " ocaml {{{
+  " autocmd FileType ocaml set rtp^="/usr/local/google/home/zhin/.opam/4.09.0/share/ocp-indent/vim"
+  " }}}
 augroup END
 " }}}
+"
 
 " Used to be NERDTree {{{
 let g:netrw_banner = 0
@@ -300,6 +304,8 @@ function! s:on_lsp_buffer_enabled() abort
   " refer to doc to add more commands
   " TODO some other mapping?
   nmap <buffer> <f3> <plug>(lsp-document-diagnostics)
+  nmap <buffer> [g <plug>(lsp-previous-diagnostic)
+  nmap <buffer> ]g <plug>(lsp-next-diagnostic)
 
   " gq is already the formatting motion, but let's reuse it.
   " Since this is within a lsp install guard, it shouldn't affect the usual
@@ -345,21 +351,9 @@ abbreviate tf TurboFan
 abbreviate lo Liftoff
 abbreviate v8iwyu v8:7490
 abbreviate v8clean v8:11384
-abbreviate v8extmul v8:11262
-abbreviate v8extadd v8:11086
-abbreviate v8shuffle v8:11270
-abbreviate v8double v8:11265
-abbreviate v8lane v8:10975
-abbreviate v8alltrue v8:11347
-abbreviate v8ne v8:11348
-abbreviate v8eq v8:11215
-" Running out of bits for instruction-codes-ia32
-abbreviate v8ia32op v8:11217
-abbreviate v8pop v8:11002
-abbreviate v8popcnt v8:11002
-abbreviate v8cmp v8:11415
-abbreviate v8abs v8:11416
 abbreviate v8ship v8:11511
+abbreviate v8relax v8:11583
+abbreviate v8share v8:11589
 " }}}
 
 " set statusline=%<%F\ %m%r%h%w%y%{'['.(&fenc!=''?&fenc:&enc).']['.&fileformat.']'}%=%l/%L,%c%V%8P

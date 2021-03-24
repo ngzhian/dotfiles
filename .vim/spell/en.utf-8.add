@@ -12,3 +12,17 @@ sx/!
 indcies/!
 fuzzer
 AVX
+FMA
+#iffer
+#iffer/!
+#iffer
+NaNs
+Wasm
+roundings
+ia32
+NEONv2
+ARMv7
+ARM64
+FMA3
+ia32
+runtimes
